@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>سیستەمی بەڕێوەبردنی زانیاری کەسەکان</title>
+    <title>سیستەمی بەڕێوەبردنی زانیاری نەوجەوانان</title>
     <style>
         * {
             margin: 0;
@@ -17,11 +17,11 @@
             --primary-dark: #0f1f33;
             --accent: #3182ce;
             --accent-hover: #2b6cb0;
-            --danger: #e53e3e;
+            --danger: #D62828;
             --danger-hover: #c53030;
-            --success: #38a169;
-            --success-hover: #2f855a;
-            --warning: #d69e2e;
+            --success: #007c4f;
+            --success-hover: #026048;
+            --warning: #c78200;
             --bg: #f7fafc;
             --card-bg: #ffffff;
             --text: #1a202c;
@@ -836,21 +836,20 @@
     <header class="header">
         <div class="header-content">
             <h1>
-                <div class="header-icon">📋</div>
-                سیستەمی بەڕێوەبردنی زانیاری کەسەکان
+                سیستەمی بەڕێوەبردنی زانیاری نەوجەوانان
             </h1>
             <div class="header-actions">
                 <button class="btn btn-success" onclick="exportData()">
-                    <span>💾</span>
-                    <span>داگرتن</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export
                 </button>
                 <button class="btn btn-secondary" onclick="document.getElementById('fileInput').click()">
-                    <span>📥</span>
-                    <span>هێنانەوە</span>
-                </button>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>         </svg>
+            Import
+          </button>
                 <button class="btn btn-primary" onclick="openModal()">
                     <span>➕</span>
-                    <span>نوێ</span>
+                    تۆمارکردنی کەسێکی نوێ
                 </button>
             </div>
         </div>
@@ -1020,7 +1019,6 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" onclick="closeModal()">پاشگەزبوونەوە</button>
                 <button type="submit" class="btn btn-primary" form="personForm">
-                    <span>💾</span>
                     <span id="saveBtnText">تۆمارکردن</span>
                 </button>
             </div>
@@ -1126,7 +1124,7 @@
 
                         ${record.fatherName || record.fatherPhone || record.fatherJob ? `
                         <div class="card-section">
-                            <div class="card-section-title">👨 باوک</div>
+                            <div class="card-section-title">باوک</div>
                             <div class="parent-block">
                                 ${record.fatherName ? `<div class="parent-block-name">${escapeHtml(record.fatherName)}</div>` : ''}
                                 <div class="parent-block-row">
@@ -1143,7 +1141,7 @@
 
                         ${record.motherName || record.motherPhone || record.motherJob ? `
                         <div class="card-section">
-                            <div class="card-section-title">👩 دایک</div>
+                            <div class="card-section-title">دایک</div>
                             <div class="parent-block">
                                 ${record.motherName ? `<div class="parent-block-name">${escapeHtml(record.motherName)}</div>` : ''}
                                 <div class="parent-block-row">
@@ -1159,7 +1157,7 @@
                         ` : ''}
 
                         <div class="card-section">
-                            <div class="card-section-title">📊 زانیاری زیاتر</div>
+                            <div class="card-section-title">زانیاری زیاتر</div>
                             <div class="card-field">
                                 <span class="card-field-label">باری دارایی</span>
                                 <span class="card-field-value">${escapeHtml(record.financialStatus || '-')}</span>
@@ -1180,24 +1178,24 @@
 
                         ${record.hobbies ? `
                         <div class="card-section">
-                            <div class="card-section-title">🎯 حەز و خوولیا</div>
+                            <div class="card-section-title">حەز و خوولیا</div>
                             <div class="card-text-block">${escapeHtml(record.hobbies)}</div>
                         </div>
                         ` : ''}
 
                         ${record.personalInfo ? `
                         <div class="card-section">
-                            <div class="card-section-title">📝 زانیاری تایبەتی</div>
+                            <div class="card-section-title">زانیاری تایبەتی</div>
                             <div class="card-text-block">${escapeHtml(record.personalInfo)}</div>
                         </div>
                         ` : ''}
                     </div>
                     <div class="card-actions">
                         <button class="btn btn-primary btn-sm" onclick="editRecord('${record.id}')">
-                            <span>✏️</span> دەستکاری
+                            دەستکاری
                         </button>
                         <button class="btn btn-danger btn-sm" onclick="deleteRecord('${record.id}')">
-                            <span>🗑️</span> سڕینەوە
+                            سڕینەوە
                         </button>
                     </div>
                 </div>
