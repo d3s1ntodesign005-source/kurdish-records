@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>سیستەمی بەڕێوەبردنی زانیاری کەسەکان</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1e3a5f;
+            --primary-light: #2c5282;
+            --primary-dark: #0f1f33;
+            --accent: #3182ce;
+            --accent-hover: #2b6cb0;
+            --danger: #e53e3e;
+            --danger-hover: #c53030;
+            --success: #38a169;
+            --success-hover: #2f855a;
+            --warning: #d69e2e;
+            --bg: #f7fafc;
+            --card-bg: #ffffff;
+            --text: #1a202c;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Tahoma', 'Arial', 'Helvetica Neue', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            direction: rtl;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.25rem 1.5rem;
+            box-shadow: var(--shadow-lg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(255,255,255,0.15);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            white-space: nowrap;
+            touch-action: manipulation;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: var(--success-hover);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: var(--danger-hover);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg);
+        }
+
+        .btn-sm {
+            padding: 0.375rem 0.625rem;
+            font-size: 0.75rem;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        /* Search & Stats Bar */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 250px;
+            max-width: 500px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            font-family: inherit;
+            font-size: 0.875rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: white;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .stats {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .stats-number {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            color: white;
+            padding: 1rem 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-header-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .card-name {
+            font-size: 1.125rem;
+            font-weight: 700;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .card-code {
+            font-size: 0.75rem;
+            opacity: 0.85;
+            font-family: 'Segoe UI', 'Consolas', monospace;
+            direction: ltr;
+            unicode-bidi: bidi-override;
+            text-align: right;
+            word-break: break-all;
+        }
+
+        .card-gender-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: rgba(255,255,255,0.2);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .card-body {
+            padding: 1.25rem;
+            flex: 1;
+        }
+
+        .card-field {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+            gap: 0.75rem;
+        }
+
+        .card-field:last-child {
+            border-bottom: none;
+        }
+
+        .card-field-label {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .card-field-value {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text);
+            text-align: left;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            min-width: 0;
+        }
+
+        .card-field-value.ltr {
+            direction: ltr;
+            unicode-bidi: bidi-override;
+            text-align: left;
+            font-family: 'Segoe UI', 'Consolas', monospace;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem 1.25rem;
+            background: var(--bg);
+            border-top: 1px solid var(--border);
+        }
+
+        .card-actions .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.25rem;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.95);
+            transition: transform 0.3s;
+            -webkit-overflow-scrolling: touch;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .modal-header h2 {
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .modal-close:hover {
+            background: rgba(255,255,255,0.15);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.875rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: white;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .form-group select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23718096' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left 1rem center;
+            padding-left: 2rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            background: var(--bg);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        /* Toast Notification */
+        .toast-container {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-width: calc(100vw - 2rem);
+        }
+
+        .toast {
+            background: white;
+            border-radius: var(--radius-sm);
+            padding: 1rem 1.25rem;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            min-width: 280px;
+            max-width: 400px;
+            animation: slideIn 0.3s ease;
+            border-right: 4px solid var(--success);
+            word-wrap: break-word;
+        }
+
+        .toast.error {
+            border-right-color: var(--danger);
+        }
+
+        .toast.warning {
+            border-right-color: var(--warning);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
+        .toast.removing {
+            animation: fadeOut 0.3s ease forwards;
+        }
+
+        .toast-icon {
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .toast-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: var(--text);
+        }
+
+        .toast-message {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.125rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.75rem;
+            }
+
+            .header h1 {
+                font-size: 1.1rem;
+            }
+
+            .header-actions {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .header-actions .btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.75rem;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.75rem;
+            }
+
+            .search-box {
+                max-width: 100%;
+                min-width: unset;
+            }
+
+            .stats {
+                justify-content: center;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .card-header {
+                padding: 0.875rem 1rem;
+            }
+
+            .card-name {
+                font-size: 1rem;
+            }
+
+            .card-body {
+                padding: 1rem;
+            }
+
+            .card-field {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+                padding: 0.625rem 0;
+            }
+
+            .card-field-label {
+                font-size: 0.75rem;
+            }
+
+            .card-field-value {
+                font-size: 0.85rem;
+                text-align: right;
+                width: 100%;
+            }
+
+            .card-field-value.ltr {
+                text-align: left;
+            }
+
+            .card-actions {
+                padding: 0.875rem 1rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .form-row .form-group {
+                margin-bottom: 1rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .modal {
+                max-height: 95vh;
+                border-radius: var(--radius-sm);
+            }
+
+            .modal-body {
+                padding: 1rem;
+            }
+
+            .modal-footer {
+                padding: 0.875rem 1rem;
+                flex-direction: column;
+            }
+
+            .modal-footer .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .toast {
+                min-width: unset;
+                max-width: calc(100vw - 2rem);
+                padding: 0.875rem 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 0.95rem;
+            }
+
+            .header-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 1rem;
+            }
+
+            .header-actions .btn span:first-child {
+                display: none;
+            }
+
+            .header-actions .btn {
+                padding: 0.5rem;
+                font-size: 0.7rem;
+            }
+
+            .search-box input {
+                font-size: 16px; /* Prevent zoom on iOS */
+            }
+        }
+
+        /* Hidden file input */
+        #fileInput {
+            display: none;
+        }
+
+        /* Section divider in card */
+        .card-section {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .card-section-title {
+            font-size: 0.7rem;
+            color: var(--accent);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-section .card-field {
+            padding: 0.375rem 0;
+        }
+
+        .card-section .card-field-label {
+            font-size: 0.75rem;
+        }
+
+        .card-section .card-field-value {
+            font-size: 0.8rem;
+        }
+
+        .card-text-block {
+            margin-top: 0.5rem;
+            padding: 0.75rem;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: var(--text);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .card-text-block-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Parent info block */
+        .parent-block {
+            margin-top: 0.5rem;
+            padding: 0.75rem;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+        }
+
+        .parent-block-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.375rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .parent-block-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.25rem 0;
+            font-size: 0.8rem;
+        }
+
+        .parent-block-row-label {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .parent-block-row-value {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .parent-block-row-value.ltr {
+            direction: ltr;
+            unicode-bidi: bidi-override;
+            text-align: left;
+            font-family: 'Segoe UI', 'Consolas', monospace;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1>
+                <div class="header-icon">📋</div>
+                سیستەمی بەڕێوەبردنی زانیاری کەسەکان
+            </h1>
+            <div class="header-actions">
+                <button class="btn btn-success" onclick="exportData()">
+                    <span>💾</span>
+                    <span>داگرتن</span>
+                </button>
+                <button class="btn btn-secondary" onclick="document.getElementById('fileInput').click()">
+                    <span>📥</span>
+                    <span>هێنانەوە</span>
+                </button>
+                <button class="btn btn-primary" onclick="openModal()">
+                    <span>➕</span>
+                    <span>نوێ</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="گەڕان بە ناو، کۆد، ژمارەی تەلەفۆن، قوتابخانە..." oninput="filterRecords()">
+            </div>
+            <div class="stats">
+                <span>ژمارەی تۆمارەکان:</span>
+                <span class="stats-number" id="recordCount">0</span>
+            </div>
+        </div>
+
+        <!-- Cards Grid -->
+        <div id="cardsContainer" class="cards-grid">
+            <!-- Cards will be rendered here -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <div class="empty-state-icon">🔍</div>
+            <h3>هیچ ئەنجامێک نەدۆزرایەوە</h3>
+            <p>تکایە وشەیەکی تر بنووسە یان تۆمارێکی نوێ زیاد بکە</p>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div id="modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">تۆمارکردنی کەسێکی نوێ</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="personForm" onsubmit="saveRecord(event)">
+                    <input type="hidden" id="recordId">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="code">کۆد *</label>
+                            <input type="text" id="code" required placeholder="بۆ نموونە: A104">
+                        </div>
+                        <div class="form-group">
+                            <label for="fullName">ناوی سیانی *</label>
+                            <input type="text" id="fullName" required placeholder="ناوی تەواو بنووسە">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="age">تەمەن</label>
+                            <input type="number" id="age" min="1" max="120" placeholder="تەمەن">
+                        </div>
+                        <div class="form-group">
+                            <label for="gender">ڕەگەز *</label>
+                            <select id="gender" required>
+                                <option value="">هەڵبژێرە</option>
+                                <option value="نێر">نێر</option>
+                                <option value="مێ">مێ</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="school">قوتابخانە / زانکۆ</label>
+                        <input type="text" id="school" placeholder="ناوی قوتابخانە یان زانکۆ">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location">شوێنی نیشتەجێبوون</label>
+                        <input type="text" id="location" placeholder="شار، ناوچە، گەڕەک">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">ژمارەی تەلەفۆنی کەسی</label>
+                        <input type="tel" id="phone" placeholder="بۆ نموونە: 07501234567" dir="ltr">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fatherName">ناوی باوک</label>
+                        <input type="text" id="fatherName" placeholder="ناوی باوک بنووسە">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fatherPhone">تەلەفۆنی باوک</label>
+                            <input type="tel" id="fatherPhone" placeholder="بۆ نموونە: 07801234567" dir="ltr">
+                        </div>
+                        <div class="form-group">
+                            <label for="fatherJob">پیشەی باوک</label>
+                            <input type="text" id="fatherJob" placeholder="پیشەی باوک بنووسە">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="motherName">ناوی دایک</label>
+                        <input type="text" id="motherName" placeholder="ناوی دایک بنووسە">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="motherPhone">تەلەفۆنی دایک</label>
+                            <input type="tel" id="motherPhone" placeholder="بۆ نموونە: 07701234567" dir="ltr">
+                        </div>
+                        <div class="form-group">
+                            <label for="motherJob">پیشەی دایک</label>
+                            <input type="text" id="motherJob" placeholder="پیشەی دایک بنووسە">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="financialStatus">باری دارایی</label>
+                            <select id="financialStatus">
+                                <option value="">هەڵبژێرە</option>
+                                <option value="باش">باش</option>
+                                <option value="ناوەند">ناوەند</option>
+                                <option value="لاواز">لاواز</option>
+                                <option value="زۆر لاواز">زۆر لاواز</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="worksOutside">کارکردن لە دەرەوە</label>
+                            <select id="worksOutside">
+                                <option value="">هەڵبژێرە</option>
+                                <option value="بەڵێ">بەڵێ</option>
+                                <option value="نەخێر">نەخێر</option>
+                                <option value="هەندێک کات">هەندێک کات</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="healthStatus">تەندرووستی</label>
+                            <select id="healthStatus">
+                                <option value="">هەڵبژێرە</option>
+                                <option value="تەندرووست">تەندرووست</option>
+                                <option value="نەخۆشی هەیە">نەخۆشی هەیە</option>
+                                <option value="پێویستی بە چاودێریە">پێویستی بە چاودێریە</option>
+                                <option value="ئەلەرژی هەیە">ئەلەرژی هەیە</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="languages">ئەو زمانانەی دەیزانی</label>
+                            <input type="text" id="languages" placeholder="بۆ نموونە: کوردی، عەرەبی، ئینگلیزی">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="hobbies">حەز و خوولیا</label>
+                        <textarea id="hobbies" placeholder="حەز و خوولیاکانی کەسەکە لێرە بنووسە..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="personalInfo">زانیاری تایبەتی / تێبینی</label>
+                        <textarea id="personalInfo" placeholder="هەر زانیارییەکی تایبەتی یان تێبینی لێرە بنووسە..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">پاشگەزبوونەوە</button>
+                <button type="submit" class="btn btn-primary" form="personForm">
+                    <span>💾</span>
+                    <span id="saveBtnText">تۆمارکردن</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Hidden File Input -->
+    <input type="file" id="fileInput" accept=".json" onchange="importData(event)">
+
+    <script>
+        // ⚠️ PASTE YOUR COPIED GOOGLE WEB APP URL BETWEEN THE QUOTES BELOW ⚠️
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwNPfaxaThSUgp11_4g6bH_ekZN12ufJhucyfiOII7Wzgn87Ry4DUl7EtCMfsLk9W9E/exec';
+        
+        let records = [];
+        let editingId = null;
+
+        // Initialize and Fetch from Google Sheet
+        async function init() {
+            showToast('چاوەڕوانبە...', 'بارکردنی زانیارییەکان لە گووگڵ شیت...', 'warning');
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error('تێکچوونی تۆڕەکە');
+                records = await response.json();
+                renderCards();
+                showToast('سەرکەوتوو', 'زانیارییەکان بە سەرکەوتوویی هێنران', 'success');
+            } catch (e) {
+                console.error(e);
+                showToast('هەڵە', 'نەتوانرا پەیوەندی بە بنکەی زانیارییەوە بکرێت. تکایە هێڵەکەت بپشکنە.', 'error');
+                records = [];
+                renderCards();
+            }
+        }
+
+        // Push Data to Google Sheet
+        async function saveToStorage() {
+            showToast('بارکردن...', 'پاشکەوتکردنی زانیارییەکان لەسەر عەورەکە...', 'warning');
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', 
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(records)
+                });
+                showToast('سەرکەوتوو', 'گۆڕانکارییەکان بۆ هەموو ئامێرەکان هاوکات کران', 'success');
+            } catch (e) {
+                console.error(e);
+                showToast('هەڵە', 'سەرنەکەوت لە پاشکەوتکردنی ڕاستەوخۆ', 'error');
+            }
+        }
+
+        // Generate unique ID
+        function generateId() {
+            return 'rec-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // Render Cards
+        function renderCards(filteredRecords = null) {
+            const container = document.getElementById('cardsContainer');
+            const emptyState = document.getElementById('emptyState');
+            const countEl = document.getElementById('recordCount');
+
+            const data = filteredRecords || records;
+            countEl.textContent = data.length;
+
+            if (data.length === 0) {
+                container.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            container.innerHTML = data.map(record => `
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-header-info">
+                            <div class="card-name">${escapeHtml(record.fullName)}</div>
+                            <div class="card-code">${escapeHtml(record.code)}</div>
+                        </div>
+                        <span class="card-gender-badge">${escapeHtml(record.gender)}</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-field">
+                            <span class="card-field-label">تەمەن</span>
+                            <span class="card-field-value">${record.age ? record.age + ' ساڵ' : '-'}</span>
+                        </div>
+                        <div class="card-field">
+                            <span class="card-field-label">قوتابخانە / زانکۆ</span>
+                            <span class="card-field-value">${escapeHtml(record.school || '-')}</span>
+                        </div>
+                        <div class="card-field">
+                            <span class="card-field-label">شوێنی نیشتەجێبوون</span>
+                            <span class="card-field-value">${escapeHtml(record.location || '-')}</span>
+                        </div>
+                        <div class="card-field">
+                            <span class="card-field-label">ژمارەی تەلەفۆن</span>
+                            <span class="card-field-value ltr">${escapeHtml(record.phone || '-')}</span>
+                        </div>
+
+                        ${record.fatherName || record.fatherPhone || record.fatherJob ? `
+                        <div class="card-section">
+                            <div class="card-section-title">👨 باوک</div>
+                            <div class="parent-block">
+                                ${record.fatherName ? `<div class="parent-block-name">${escapeHtml(record.fatherName)}</div>` : ''}
+                                <div class="parent-block-row">
+                                    <span class="parent-block-row-label">تەلەفۆن</span>
+                                    <span class="parent-block-row-value ltr">${escapeHtml(record.fatherPhone || '-')}</span>
+                                </div>
+                                <div class="parent-block-row">
+                                    <span class="parent-block-row-label">پیشە</span>
+                                    <span class="parent-block-row-value">${escapeHtml(record.fatherJob || '-')}</span>
+                                </div>
+                            </div>
+                        </div>
+                        ` : ''}
+
+                        ${record.motherName || record.motherPhone || record.motherJob ? `
+                        <div class="card-section">
+                            <div class="card-section-title">👩 دایک</div>
+                            <div class="parent-block">
+                                ${record.motherName ? `<div class="parent-block-name">${escapeHtml(record.motherName)}</div>` : ''}
+                                <div class="parent-block-row">
+                                    <span class="parent-block-row-label">تەلەفۆن</span>
+                                    <span class="parent-block-row-value ltr">${escapeHtml(record.motherPhone || '-')}</span>
+                                </div>
+                                <div class="parent-block-row">
+                                    <span class="parent-block-row-label">پیشە</span>
+                                    <span class="parent-block-row-value">${escapeHtml(record.motherJob || '-')}</span>
+                                </div>
+                            </div>
+                        </div>
+                        ` : ''}
+
+                        <div class="card-section">
+                            <div class="card-section-title">📊 زانیاری زیاتر</div>
+                            <div class="card-field">
+                                <span class="card-field-label">باری دارایی</span>
+                                <span class="card-field-value">${escapeHtml(record.financialStatus || '-')}</span>
+                            </div>
+                            <div class="card-field">
+                                <span class="card-field-label">کارکردن لە دەرەوە</span>
+                                <span class="card-field-value">${escapeHtml(record.worksOutside || '-')}</span>
+                            </div>
+                            <div class="card-field">
+                                <span class="card-field-label">تەندرووستی</span>
+                                <span class="card-field-value">${escapeHtml(record.healthStatus || '-')}</span>
+                            </div>
+                            <div class="card-field">
+                                <span class="card-field-label">زمانەکان</span>
+                                <span class="card-field-value">${escapeHtml(record.languages || '-')}</span>
+                            </div>
+                        </div>
+
+                        ${record.hobbies ? `
+                        <div class="card-section">
+                            <div class="card-section-title">🎯 حەز و خوولیا</div>
+                            <div class="card-text-block">${escapeHtml(record.hobbies)}</div>
+                        </div>
+                        ` : ''}
+
+                        ${record.personalInfo ? `
+                        <div class="card-section">
+                            <div class="card-section-title">📝 زانیاری تایبەتی</div>
+                            <div class="card-text-block">${escapeHtml(record.personalInfo)}</div>
+                        </div>
+                        ` : ''}
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-primary btn-sm" onclick="editRecord('${record.id}')">
+                            <span>✏️</span> دەستکاری
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteRecord('${record.id}')">
+                            <span>🗑️</span> سڕینەوە
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Filter Records
+        function filterRecords() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+
+            if (!query) {
+                renderCards(records);
+                return;
+            }
+
+            const filtered = records.filter(record => {
+                const searchText = [
+                    record.code,
+                    record.fullName,
+                    record.phone,
+                    record.fatherName,
+                    record.fatherPhone,
+                    record.fatherJob,
+                    record.motherName,
+                    record.motherPhone,
+                    record.motherJob,
+                    record.gender,
+                    record.age?.toString(),
+                    record.school,
+                    record.location,
+                    record.financialStatus,
+                    record.worksOutside,
+                    record.healthStatus,
+                    record.languages,
+                    record.hobbies,
+                    record.personalInfo
+                ].filter(Boolean).join(' ').toLowerCase();
+
+                return searchText.includes(query);
+            });
+
+            renderCards(filtered);
+        }
+
+        // Modal Functions
+        function openModal(recordId = null) {
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modalTitle');
+            const saveBtnText = document.getElementById('saveBtnText');
+            const form = document.getElementById('personForm');
+
+            editingId = recordId;
+
+            if (recordId) {
+                const record = records.find(r => r.id === recordId);
+                if (record) {
+                    modalTitle.textContent = 'دەستکاری تۆمار';
+                    saveBtnText.textContent = 'نوێکردنەوە';
+                    document.getElementById('recordId').value = record.id;
+                    document.getElementById('code').value = record.code;
+                    document.getElementById('fullName').value = record.fullName;
+                    document.getElementById('age').value = record.age || '';
+                    document.getElementById('gender').value = record.gender;
+                    document.getElementById('school').value = record.school || '';
+                    document.getElementById('location').value = record.location || '';
+                    document.getElementById('phone').value = record.phone || '';
+                    document.getElementById('fatherName').value = record.fatherName || '';
+                    document.getElementById('fatherPhone').value = record.fatherPhone || '';
+                    document.getElementById('fatherJob').value = record.fatherJob || '';
+                    document.getElementById('motherName').value = record.motherName || '';
+                    document.getElementById('motherPhone').value = record.motherPhone || '';
+                    document.getElementById('motherJob').value = record.motherJob || '';
+                    document.getElementById('financialStatus').value = record.financialStatus || '';
+                    document.getElementById('worksOutside').value = record.worksOutside || '';
+                    document.getElementById('healthStatus').value = record.healthStatus || '';
+                    document.getElementById('languages').value = record.languages || '';
+                    document.getElementById('hobbies').value = record.hobbies || '';
+                    document.getElementById('personalInfo').value = record.personalInfo || '';
+                }
+            } else {
+                modalTitle.textContent = 'تۆمارکردنی کەسێکی نوێ';
+                saveBtnText.textContent = 'تۆمارکردن';
+                form.reset();
+                document.getElementById('recordId').value = '';
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+            document.body.style.overflow = '';
+            editingId = null;
+        }
+
+        // Save Record
+        function saveRecord(event) {
+            event.preventDefault();
+
+            const code = document.getElementById('code').value.trim();
+            const fullName = document.getElementById('fullName').value.trim();
+            const age = document.getElementById('age').value;
+            const gender = document.getElementById('gender').value;
+            const school = document.getElementById('school').value.trim();
+            const location = document.getElementById('location').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const fatherName = document.getElementById('fatherName').value.trim();
+            const fatherPhone = document.getElementById('fatherPhone').value.trim();
+            const fatherJob = document.getElementById('fatherJob').value.trim();
+            const motherName = document.getElementById('motherName').value.trim();
+            const motherPhone = document.getElementById('motherPhone').value.trim();
+            const motherJob = document.getElementById('motherJob').value.trim();
+            const financialStatus = document.getElementById('financialStatus').value;
+            const worksOutside = document.getElementById('worksOutside').value;
+            const healthStatus = document.getElementById('healthStatus').value;
+            const languages = document.getElementById('languages').value.trim();
+            const hobbies = document.getElementById('hobbies').value.trim();
+            const personalInfo = document.getElementById('personalInfo').value.trim();
+
+            if (!code || !fullName || !gender) {
+                showToast('هەڵە', 'تکایە خانە پێویستەکان (کۆد، ناو، ڕەگەز) پڕبکەرەوە', 'error');
+                return;
+            }
+
+            const duplicate = records.find(r => r.code === code && r.id !== editingId);
+            if (duplicate) {
+                showToast('هەڵە', 'ئەم کۆدە پێشتر بەکارهاتووە: ' + code + ' — تکایە کۆدێکی تر هەڵبژێرە', 'error');
+                document.getElementById('code').style.borderColor = 'var(--danger)';
+                document.getElementById('code').focus();
+                setTimeout(() => {
+                    document.getElementById('code').style.borderColor = '';
+                }, 3000);
+                return;
+            }
+
+            const recordData = {
+                id: editingId || generateId(),
+                code,
+                fullName,
+                age: age ? parseInt(age) : null,
+                gender,
+                school,
+                location,
+                phone,
+                fatherName,
+                fatherPhone,
+                fatherJob,
+                motherName,
+                motherPhone,
+                motherJob,
+                financialStatus,
+                worksOutside,
+                healthStatus,
+                languages,
+                hobbies,
+                personalInfo
+            };
+
+            if (editingId) {
+                const index = records.findIndex(r => r.id === editingId);
+                if (index !== -1) {
+                    records[index] = recordData;
+                }
+            } else {
+                records.push(recordData);
+            }
+
+            closeModal();
+            filterRecords(); 
+            saveToStorage(); // Triggers Cloud sync
+        }
+
+        // Edit Record
+        function editRecord(id) {
+            openModal(id);
+        }
+
+        // Delete Record
+        function deleteRecord(id) {
+            const record = records.find(r => r.id === id);
+            if (!record) return;
+
+            if (confirm(`دڵنیای لە سڕینەوەی تۆماری «${record.fullName}»؟\n\nئەم کردارە ناتوانرێت پاشگەز بکرێتەوە.`)) {
+                records = records.filter(r => r.id !== id);
+                filterRecords();
+                saveToStorage(); // Sync removal to Cloud
+            }
+        }
+
+        // Native Download Backup
+        function exportData() {
+            if (records.length === 0) {
+                showToast('ئاگاداری', 'هیچ تۆمارێک نییە بۆ داگرتن', 'warning');
+                return;
+            }
+
+            const dataStr = JSON.stringify(records, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `kurdish_records_backup_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            showToast('سەرکەوتوو', 'کۆپی پشتگیری بە سەرکەوتوویی داگیرا', 'success');
+        }
+
+        // Native Upload Import
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+
+                    if (!Array.isArray(imported)) {
+                        throw new Error('فۆرماتی فایلەکە هەڵەیە');
+                    }
+
+                    const validRecords = imported.filter(item => 
+                        item && item.code && item.fullName && item.gender
+                    );
+
+                    if (validRecords.length === 0) {
+                        showToast('هەڵە', 'هیچ تۆمارێکی دروست نەدۆزرایەوە لە فایلەکەدا', 'error');
+                        return;
+                    }
+
+                    const action = confirm(
+                        `${validRecords.length} تۆمار دۆزرایەوە.\n\n«OK» بکە بۆ لابردنی تۆمارەکانی ئێستا و جێگۆڕکردن.\n«Cancel» بکە بۆ زیادکردن بە تۆمارەکانی ئێستا.`
+                    );
+
+                    if (action) {
+                        records = validRecords.map(r => ({
+                            ...r,
+                            id: r.id || generateId()
+                        }));
+                    } else {
+                        const newRecords = validRecords.filter(r => 
+                            !records.some(existing => existing.code === r.code)
+                        ).map(r => ({
+                            ...r,
+                            id: generateId()
+                        }));
+                        records = [...records, ...newRecords];
+                    }
+
+                    filterRecords();
+                    saveToStorage(); // Sync native import up to Google Sheets
+                } catch (err) {
+                    showToast('هەڵە', 'نەتوانرا فایلەکە بخوێنرێتەوە: ' + err.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = ''; 
+        }
+
+        // Toast Notifications
+        function showToast(title, message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+
+            const icons = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️'
+            };
+
+            toast.innerHTML = `
+                <span class="toast-icon">${icons[type]}</span>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('removing');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }, 4000);
+        }
+
+        // Event Listeners
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Initialize App
+        init();
+    </script>
+</body>
+</html>
