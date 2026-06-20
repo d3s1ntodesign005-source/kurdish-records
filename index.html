@@ -906,8 +906,8 @@
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="age">تەمەن</label>
-                            <input type="number" id="age" min="1" max="120" placeholder="تەمەن">
+                            <label for="dateOfBirth">بەرواری لەدایکبوون</label>
+                            <input type="date" id="dateOfBirth">
                         </div>
                         <div class="form-group">
                             <label for="gender">ڕەگەز *</label>
@@ -1038,6 +1038,19 @@
         let records = [];
         let editingId = null;
 
+// Calculate age from date of birth
+        function calculateAge(dateOfBirth) {
+            if (!dateOfBirth) return null;
+            const today = new Date();
+            const birthDate = new Date(dateOfBirth);
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        }
+
         // Initialize and Fetch from Google Sheet
         async function init() {
             showToast('چاوەڕوانبە...', 'بارکردنی زانیارییەکان لە گووگڵ شیت...', 'warning');
@@ -1106,8 +1119,12 @@
                     </div>
                     <div class="card-body">
                         <div class="card-field">
+                            <span class="card-field-label">بەرواری لەدایکبوون</span>
+                            <span class="card-field-value ltr">${escapeHtml(record.dateOfBirth || '-')}</span>
+                        </div>
+                        <div class="card-field">
                             <span class="card-field-label">تەمەن</span>
-                            <span class="card-field-value">${record.age ? record.age + ' ساڵ' : '-'}</span>
+                            <span class="card-field-value">${record.dateOfBirth ? calculateAge(record.dateOfBirth) + ' ساڵ' : '-'}</span>
                         </div>
                         <div class="card-field">
                             <span class="card-field-label">قوتابخانە / زانکۆ</span>
@@ -1231,7 +1248,7 @@
                     record.motherPhone,
                     record.motherJob,
                     record.gender,
-                    record.age?.toString(),
+                    record.dateOfBirth,
                     record.school,
                     record.location,
                     record.financialStatus,
@@ -1265,7 +1282,7 @@
                     document.getElementById('recordId').value = record.id;
                     document.getElementById('code').value = record.code;
                     document.getElementById('fullName').value = record.fullName;
-                    document.getElementById('age').value = record.age || '';
+                    document.getElementById('dateOfBirth').value = record.dateOfBirth || '';
                     document.getElementById('gender').value = record.gender;
                     document.getElementById('school').value = record.school || '';
                     document.getElementById('location').value = record.location || '';
@@ -1306,7 +1323,7 @@
 
             const code = document.getElementById('code').value.trim();
             const fullName = document.getElementById('fullName').value.trim();
-            const age = document.getElementById('age').value;
+            const dateOfBirth = document.getElementById('dateOfBirth').value;
             const gender = document.getElementById('gender').value;
             const school = document.getElementById('school').value.trim();
             const location = document.getElementById('location').value.trim();
@@ -1344,7 +1361,7 @@
                 id: editingId || generateId(),
                 code,
                 fullName,
-                age: age ? parseInt(age) : null,
+                dateOfBirth: dateOfBirth || null,
                 gender,
                 school,
                 location,
@@ -1508,6 +1525,19 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closeModal();
         });
+
+// Calculate age from date of birth
+        function calculateAge(dateOfBirth) {
+            if (!dateOfBirth) return null;
+            const today = new Date();
+            const birthDate = new Date(dateOfBirth);
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        }
 
         // Initialize App
         init();
